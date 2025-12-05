@@ -50,6 +50,7 @@ dev_dependencies:
   # Testing
   bloc_test: ^9.1.5
   mocktail: ^1.0.1
+  sqflite_common_ffi: ^2.3.0
 
   # Code Generation
   build_runner: ^2.4.7

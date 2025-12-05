@@ -1,0 +1,9 @@
+# Test configuration for LaundryLogger
+#
+# The repository tests use sqflite_common_ffi with a shared database file,
+# which requires sequential test execution to avoid database locking issues.
+
+concurrency: 1  # Run tests sequentially to avoid SQLite locking
+
+# Optional: Define test timeout
+timeout: 5m

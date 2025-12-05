@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:laundry_logger/app.dart';
-import 'package:laundry_logger/core/di/injection.dart';
+import 'core/database/database_bootstrap.dart';
+import 'app.dart';
+import 'core/di/injection.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  
+Future<void> main() async {
+  // Initialize DB factory and Flutter bindings
+  await DatabaseBootstrap.init();
+
   // Initialize dependency injection
   await configureDependencies();
-  
+
+  // Now it's safe to run the app and perform DB operations from repos/blocs.
   runApp(const LaundryLoggerApp());
 }
