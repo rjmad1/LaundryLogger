@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:laundry_logger/core/router/app_router.dart';
 import 'package:laundry_logger/core/theme/app_theme.dart';
 

@@ -61,11 +61,13 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
-  assets:
-    - assets/images/
-    - assets/icons/
+  # Uncomment when assets are added:
+  # assets:
+  #   - assets/images/
+  #   - assets/icons/
 
-  fonts:
-    - family: LaundryLoggerIcons
-      fonts:
-        - asset: assets/fonts/LaundryLoggerIcons.ttf
+  # Uncomment when custom fonts are added:
+  # fonts:
+  #   - family: LaundryLoggerIcons
+  #     fonts:
+  #       - asset: assets/fonts/LaundryLoggerIcons.ttf
