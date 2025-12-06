@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'core/database/database_bootstrap.dart';
+
 import 'app.dart';
+import 'core/database/database_bootstrap.dart';
 import 'core/di/injection.dart';
 
 Future<void> main() async {

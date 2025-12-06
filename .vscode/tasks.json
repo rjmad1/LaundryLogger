@@ -1,0 +1,107 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Flutter: Run Smoke Tests",
+      "type": "shell",
+      "command": "bash",
+      "args": ["tools/smoke.sh"],
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Flutter: Run on Chrome",
+      "type": "shell",
+      "command": "flutter",
+      "args": ["run", "-d", "chrome"],
+      "options": {
+        "cwd": "${workspaceFolder}/mobile"
+      },
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Flutter: Run on Android",
+      "type": "shell",
+      "command": "flutter",
+      "args": ["run", "-d", "android"],
+      "options": {
+        "cwd": "${workspaceFolder}/mobile"
+      },
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Flutter: Hot Restart",
+      "type": "shell",
+      "command": "flutter",
+      "args": ["run", "--hot"],
+      "options": {
+        "cwd": "${workspaceFolder}/mobile"
+      },
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Flutter: Analyze",
+      "type": "shell",
+      "command": "flutter",
+      "args": ["analyze"],
+      "options": {
+        "cwd": "${workspaceFolder}/mobile"
+      },
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Flutter: Test with Coverage",
+      "type": "shell",
+      "command": "flutter",
+      "args": ["test", "--coverage"],
+      "options": {
+        "cwd": "${workspaceFolder}/mobile"
+      },
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Make: Fast Debug Build",
+      "type": "shell",
+      "command": "make",
+      "args": ["fast-debug"],
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": []
+    }
+  ]
+}

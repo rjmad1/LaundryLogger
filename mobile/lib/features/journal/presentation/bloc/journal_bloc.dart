@@ -31,17 +31,32 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
     LoadTransactions event,
     Emitter<JournalState> emit,
   ) async {
-    emit(state.copyWith(status: JournalStatus.loading));
+    // Don't show loading indicator when loading more
+    if (!event.loadMore) {
+      emit(state.copyWith(status: JournalStatus.loading));
+    }
 
     try {
+      const pageSize = 20;
+      final page = event.loadMore ? state.currentPage + 1 : 0;
+      
       final transactions = await _transactionRepository.getTransactions(
         filter: event.filter,
+        limit: pageSize,
+        offset: page * pageSize,
       );
+
+      final hasMore = transactions.length == pageSize;
+      final updatedTransactions = event.loadMore
+          ? [...state.transactions, ...transactions]
+          : transactions;
 
       emit(state.copyWith(
         status: JournalStatus.success,
-        transactions: transactions,
+        transactions: updatedTransactions,
         filter: event.filter,
+        hasMoreTransactions: hasMore,
+        currentPage: page,
       ),);
     } catch (e) {
       emit(state.copyWith(
@@ -101,11 +116,11 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
       final now = DateTime.now();
       
       // Current month boundaries
-      final currentMonthStart = DateTime(now.year, now.month, 1);
+      final currentMonthStart = DateTime(now.year, now.month);
       final currentMonthEnd = DateTime(now.year, now.month + 1, 0, 23, 59, 59);
       
       // Previous month boundaries
-      final previousMonthStart = DateTime(now.year, now.month - 1, 1);
+      final previousMonthStart = DateTime(now.year, now.month - 1);
       final previousMonthEnd = DateTime(now.year, now.month, 0, 23, 59, 59);
 
       // Fetch both summaries in parallel
@@ -130,12 +145,12 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
           currentMonthStart: currentMonthStart,
           currentMonthEnd: currentMonthEnd,
         ),
-      ));
+      ),);
     } catch (e) {
       emit(state.copyWith(
         status: JournalStatus.failure,
         error: e.toString(),
-      ));
+      ),);
     }
   }
 
@@ -220,7 +235,7 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
       emit(state.copyWith(
         status: JournalStatus.failure,
         error: 'Invalid status transition',
-      ));
+      ),);
       return;
     }
 
@@ -255,7 +270,7 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
     emit(state.copyWith(
       transactions: updatedTransactions,
       pendingTransactions: updatedPending,
-    ));
+    ),);
 
     // Now perform the actual DB update
     try {
@@ -270,11 +285,11 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
       add(RevertOptimisticUpdate(
         id: event.id,
         previousStatus: event.previousStatus,
-      ));
+      ),);
       emit(state.copyWith(
         status: JournalStatus.failure,
         error: 'Failed to update status. Reverted.',
-      ));
+      ),);
     }
   }
 
@@ -319,12 +334,12 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
         status: JournalStatus.success,
         transactions: updatedTransactions,
         pendingTransactions: updatedPending,
-      ));
+      ),);
     } catch (e) {
       emit(state.copyWith(
         status: JournalStatus.failure,
-        error: 'Failed to revert: ${e.toString()}',
-      ));
+        error: 'Failed to revert: ${e}',
+      ),);
     }
   }
 

@@ -74,7 +74,6 @@ class _SwipeableTransactionCardState extends State<SwipeableTransactionCard> {
         content: Text(
           'Status updated to ${_getStatusLabel(newStatus)}',
         ),
-        duration: const Duration(seconds: 4),
         action: SnackBarAction(
           label: 'Undo',
           onPressed: () {

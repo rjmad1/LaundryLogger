@@ -145,6 +145,10 @@ class DatabaseHelper {
     await db.execute(
       'CREATE INDEX idx_transactions_created_at ON $tableTransactions (created_at)',
     );
+    // Composite index for status + date queries (pending items)
+    await db.execute(
+      'CREATE INDEX idx_transactions_status_sent_at ON $tableTransactions (status, sent_at)',
+    );
 
     // Items indexes
     await db.execute(

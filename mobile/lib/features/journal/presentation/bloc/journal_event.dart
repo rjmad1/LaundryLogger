@@ -10,12 +10,13 @@ sealed class JournalEvent extends Equatable {
 
 /// Load transactions with optional filter.
 final class LoadTransactions extends JournalEvent {
-  const LoadTransactions({this.filter});
+  const LoadTransactions({this.filter, this.loadMore = false});
 
   final TransactionFilter? filter;
+  final bool loadMore;
 
   @override
-  List<Object?> get props => [filter];
+  List<Object?> get props => [filter, loadMore];
 }
 
 /// Load pending transactions.

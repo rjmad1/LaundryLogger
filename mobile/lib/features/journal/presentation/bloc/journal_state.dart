@@ -62,6 +62,8 @@ final class JournalState extends Equatable {
     this.monthlySummary,
     this.filter,
     this.error,
+    this.hasMoreTransactions = true,
+    this.currentPage = 0,
   });
 
   /// Current loading status.
@@ -85,6 +87,12 @@ final class JournalState extends Equatable {
   /// Error message if status is failure.
   final String? error;
 
+  /// Whether there are more transactions to load.
+  final bool hasMoreTransactions;
+
+  /// Current page for pagination.
+  final int currentPage;
+
   /// Total number of pending items.
   int get pendingCount =>
       pendingTransactions.fold(0, (sum, t) => sum + t.quantity);
@@ -102,6 +110,8 @@ final class JournalState extends Equatable {
     MonthlySummary? monthlySummary,
     TransactionFilter? filter,
     String? error,
+    bool? hasMoreTransactions,
+    int? currentPage,
   }) {
     return JournalState(
       status: status ?? this.status,
@@ -111,6 +121,8 @@ final class JournalState extends Equatable {
       monthlySummary: monthlySummary ?? this.monthlySummary,
       filter: filter ?? this.filter,
       error: error ?? this.error,
+      hasMoreTransactions: hasMoreTransactions ?? this.hasMoreTransactions,
+      currentPage: currentPage ?? this.currentPage,
     );
   }
 
@@ -123,5 +135,7 @@ final class JournalState extends Equatable {
         monthlySummary,
         filter,
         error,
+        hasMoreTransactions,
+        currentPage,
       ];
 }

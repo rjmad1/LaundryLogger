@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -16,7 +18,10 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
     on<LoadItems>(_onLoadItems);
     on<LoadArchivedItems>(_onLoadArchivedItems);
     on<LoadFavoriteItems>(_onLoadFavoriteItems);
-    on<SearchItems>(_onSearchItems);
+    on<SearchItems>(
+      _onSearchItems,
+      transformer: _debounce(const Duration(milliseconds: 300)),
+    );
     on<CreateItem>(_onCreateItem);
     on<UpdateItem>(_onUpdateItem);
     on<ArchiveItem>(_onArchiveItem);
@@ -25,6 +30,18 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
     on<ToggleFavorite>(_onToggleFavorite);
     on<ReorderItems>(_onReorderItems);
     on<CheckCanArchive>(_onCheckCanArchive);
+  }
+
+  /// Debounce transformer for search events.
+  static EventTransformer<T> _debounce<T>(Duration duration) {
+    return (events, mapper) {
+      return events
+          .distinct()
+          .asyncExpand((event) async* {
+            await Future<void>.delayed(duration);
+            yield* mapper(event);
+          });
+    };
   }
 
   final ItemRepository _itemRepository;

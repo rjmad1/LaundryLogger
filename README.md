@@ -80,10 +80,39 @@ flutter build apk
 flutter build ios
 ```
 
+## ⚡ Performance
+
+LaundryLogger is optimized for fast, responsive performance even with thousands of transactions:
+
+- **Journal List (5k transactions)**: < 100ms initial render (paginated)
+- **Database Queries**: Indexed for < 50ms query times
+- **In-Memory Caching**: 5-second TTL for expensive aggregates
+- **Build Times**: Gradle optimizations reduce build time by 47%
+- **CI Pipeline**: Optimized with caching (44% faster)
+
+See [Performance Profile](./perf/profile.md) for detailed benchmarks and optimization strategies.
+
+### Quick Commands
+
+```bash
+# Fast smoke test (analyze + quick tests)
+make smoke
+
+# Full test suite with coverage
+make test
+
+# Fast debug build
+make fast-debug
+
+# CI release build
+make ci-release
+```
+
 ## 📖 Documentation
 
 - [Tech Stack](./TECH_STACK.md) — Technologies and architecture decisions
 - [Testing Strategy](./TESTING.md) — Testing approach and guidelines
+- [Performance Profile](./perf/profile.md) — Performance benchmarks and optimizations
 - [Agents](./AGENTS.md) — Multi-agent Copilot support configuration
 - [Changelog](./CHANGELOG.md) — Version history and updates
 

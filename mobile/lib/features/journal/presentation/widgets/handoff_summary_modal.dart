@@ -208,7 +208,7 @@ class HandoffSummaryModal extends StatelessWidget {
       ),
     );
 
-    if (confirmed == true) {
+    if (confirmed ?? false) {
       return LaundryTransaction(
         itemId: item.id!,
         itemName: item.name,
@@ -216,7 +216,7 @@ class HandoffSummaryModal extends StatelessWidget {
         rate: rate,
         memberId: member?.id,
         memberName: member?.name,
-        notes: notes?.isEmpty == true ? null : notes,
+        notes: notes?.isEmpty ?? false ? null : notes,
         sentAt: DateTime.now(),
       );
     }

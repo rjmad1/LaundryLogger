@@ -1,3 +1,4 @@
+import '../../../../core/cache/lru_cache.dart';
 import '../../../../core/database/database_helper.dart';
 import '../../domain/entities/transaction.dart';
 import '../../domain/repositories/transaction_repository.dart';
@@ -10,6 +11,23 @@ class TransactionRepositoryImpl implements TransactionRepository {
       : _databaseHelper = databaseHelper ?? DatabaseHelper.instance;
 
   final DatabaseHelper _databaseHelper;
+
+  // Cache for expensive aggregate queries (5 second TTL)
+  final LruCache<String, SpendingSummary> _summaryCache = LruCache(
+    maxSize: 20,
+    ttl: const Duration(seconds: 5),
+  );
+
+  final LruCache<String, int> _countCache = LruCache(
+    maxSize: 10,
+    ttl: const Duration(seconds: 5),
+  );
+
+  /// Invalidates all caches (call after writes).
+  void _invalidateCaches() {
+    _summaryCache.clear();
+    _countCache.clear();
+  }
 
   @override
   Future<List<LaundryTransaction>> getTransactions({
@@ -100,6 +118,8 @@ class TransactionRepositoryImpl implements TransactionRepository {
       model.toInsertMap(),
     );
 
+    _invalidateCaches();
+
     return transaction.copyWith(
       id: id,
       createdAt: DateTime.now(),
@@ -123,6 +143,8 @@ class TransactionRepositoryImpl implements TransactionRepository {
       whereArgs: [transaction.id],
     );
 
+    _invalidateCaches();
+
     return transaction;
   }
 
@@ -144,6 +166,8 @@ class TransactionRepositoryImpl implements TransactionRepository {
           : transaction.returnedAt,
     );
 
+    _invalidateCaches();
+
     return updateTransaction(updated);
   }
 
@@ -154,6 +178,7 @@ class TransactionRepositoryImpl implements TransactionRepository {
       where: 'id = ?',
       whereArgs: [id],
     );
+    _invalidateCaches();
     return count > 0;
   }
 
@@ -163,6 +188,15 @@ class TransactionRepositoryImpl implements TransactionRepository {
     DateTime? endDate,
     int? memberId,
   }) async {
+    // Generate cache key
+    final cacheKey = 'summary_${startDate?.toIso8601String() ?? ''}_${endDate?.toIso8601String() ?? ''}_${memberId ?? ''}';
+    
+    // Check cache first
+    final cached = _summaryCache.get(cacheKey);
+    if (cached != null) {
+      return cached;
+    }
+
     final conditions = <String>[];
     final whereArgs = <dynamic>[];
 
@@ -211,12 +245,17 @@ class TransactionRepositoryImpl implements TransactionRepository {
       byMember[row['member'] as String] = (row['amount'] as num).toDouble();
     }
 
-    return SpendingSummary(
+    final summary = SpendingSummary(
       totalAmount: totalAmount,
       totalItems: totalItems,
       totalTransactions: totalTransactions,
       byMember: byMember,
     );
+
+    // Cache the result
+    _summaryCache.put(cacheKey, summary);
+
+    return summary;
   }
 
   @override
