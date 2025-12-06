@@ -81,7 +81,7 @@ class LaundryTransaction extends Equatable {
 
   /// Calculates the total service charges.
   double get totalServiceCharges {
-    return serviceCharges.values.fold(0.0, (sum, charge) => sum + charge);
+    return serviceCharges.values.fold(0, (sum, charge) => sum + charge);
   }
 
   /// Calculates the total cost including services.

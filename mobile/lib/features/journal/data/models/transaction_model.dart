@@ -118,8 +118,9 @@ class TransactionModel extends LaundryTransaction {
     try {
       final decoded = jsonDecode(chargesJson);
       if (decoded is Map) {
-        return decoded.map((key, value) =>
-            MapEntry(key.toString(), (value as num).toDouble()));
+        return decoded.map(
+          (key, value) => MapEntry(key.toString(), (value as num).toDouble()),
+        );
       }
       return {};
     } catch (e) {

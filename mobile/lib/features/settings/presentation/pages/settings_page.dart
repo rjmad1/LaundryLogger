@@ -18,7 +18,8 @@ class SettingsPage extends StatelessWidget {
             title: const Text('Household Members'),
             subtitle: const Text('Manage family members'),
             onTap: () {
-              // TODO: Navigate to household members
+              // Navigate to household members screen
+              Navigator.of(context).pushNamed('/household');
             },
           ),
           ListTile(
@@ -26,7 +27,8 @@ class SettingsPage extends StatelessWidget {
             title: const Text('PIN Protection'),
             subtitle: const Text('Secure your data'),
             onTap: () {
-              // TODO: Navigate to PIN settings
+              // Navigate to PIN/security settings
+              Navigator.of(context).pushNamed('/settings/pin');
             },
           ),
           ListTile(
@@ -34,7 +36,8 @@ class SettingsPage extends StatelessWidget {
             title: const Text('Backup & Restore'),
             subtitle: const Text('Export or import data'),
             onTap: () {
-              // TODO: Navigate to backup settings
+              // Navigate to Backup & Restore settings
+              Navigator.of(context).pushNamed('/settings/backup');
             },
           ),
           ListTile(
@@ -42,7 +45,34 @@ class SettingsPage extends StatelessWidget {
             title: const Text('Export Data'),
             subtitle: const Text('CSV or PDF export'),
             onTap: () {
-              // TODO: Show export options
+              // Show export options (CSV / Backup)
+              showModalBottomSheet<void>(
+                context: context,
+                builder: (_) {
+                  return SafeArea(
+                    child: Wrap(
+                      children: [
+                        ListTile(
+                          leading: const Icon(Icons.file_upload),
+                          title: const Text('Export CSV'),
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            Navigator.of(context).pushNamed('/settings/export_csv');
+                          },
+                        ),
+                        ListTile(
+                          leading: const Icon(Icons.backup),
+                          title: const Text('Create Local Backup'),
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            Navigator.of(context).pushNamed('/settings/backup');
+                          },
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              );
             },
           ),
           const Divider(),

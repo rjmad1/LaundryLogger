@@ -242,12 +242,12 @@ class DatabaseHelper {
   Future<void> _migrateV2ToV3(Database db) async {
     // Add services column (JSON array of service names)
     await db.execute(
-      'ALTER TABLE $tableTransactions ADD COLUMN services TEXT NOT NULL DEFAULT \'[]\'',
+      "ALTER TABLE $tableTransactions ADD COLUMN services TEXT NOT NULL DEFAULT '[]'",
     );
 
     // Add service_charges column (JSON object mapping service to charge)
     await db.execute(
-      'ALTER TABLE $tableTransactions ADD COLUMN service_charges TEXT NOT NULL DEFAULT \'{}\'',
+      "ALTER TABLE $tableTransactions ADD COLUMN service_charges TEXT NOT NULL DEFAULT '{}'",
     );
 
     // Insert default service charge settings
