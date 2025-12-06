@@ -7,10 +7,9 @@ void main() {
       final cache = LruCache<String, int>(
         maxSize: 3,
         ttl: const Duration(seconds: 1),
-      );
-
-      cache.put('a', 1);
-      cache.put('b', 2);
+      )
+        ..put('a', 1)
+        ..put('b', 2);
 
       expect(cache.get('a'), 1);
       expect(cache.get('b'), 2);
@@ -20,11 +19,10 @@ void main() {
       final cache = LruCache<String, int>(
         maxSize: 2,
         ttl: const Duration(seconds: 1),
-      );
-
-      cache.put('a', 1);
-      cache.put('b', 2);
-      cache.put('c', 3); // Should evict 'a'
+      )
+        ..put('a', 1)
+        ..put('b', 2)
+        ..put('c', 3); // Should evict 'a'
 
       expect(cache.get('a'), isNull);
       expect(cache.get('b'), 2);
@@ -35,11 +33,12 @@ void main() {
       final cache = LruCache<String, int>(
         maxSize: 2,
         ttl: const Duration(seconds: 1),
-      );
-
-      cache.put('a', 1);
-      cache.put('b', 2);
-      cache.get('a'); // Access 'a', making it most recent
+      )
+        ..put('a', 1)
+        ..put('b', 2)
+        // ignore: cascade_invocations
+        ..get('a'); // Access 'a', making it most recent
+      // ignore: cascade_invocations
       cache.put('c', 3); // Should evict 'b', not 'a'
 
       expect(cache.get('a'), 1);
@@ -51,9 +50,7 @@ void main() {
       final cache = LruCache<String, int>(
         maxSize: 3,
         ttl: const Duration(milliseconds: 100),
-      );
-
-      cache.put('a', 1);
+      )..put('a', 1);
       expect(cache.get('a'), 1);
 
       await Future<void>.delayed(const Duration(milliseconds: 150));
@@ -65,11 +62,10 @@ void main() {
       final cache = LruCache<String, int>(
         maxSize: 3,
         ttl: const Duration(seconds: 1),
-      );
-
-      cache.put('a', 1);
-      cache.put('b', 2);
-      cache.clear();
+      )
+        ..put('a', 1)
+        ..put('b', 2)
+        ..clear();
 
       expect(cache.get('a'), isNull);
       expect(cache.get('b'), isNull);
@@ -80,11 +76,10 @@ void main() {
       final cache = LruCache<String, int>(
         maxSize: 3,
         ttl: const Duration(seconds: 1),
-      );
-
-      cache.put('a', 1);
-      cache.put('b', 2);
-      cache.invalidate('a');
+      )
+        ..put('a', 1)
+        ..put('b', 2)
+        ..invalidate('a');
 
       expect(cache.get('a'), isNull);
       expect(cache.get('b'), 2);
@@ -94,10 +89,9 @@ void main() {
       final cache = LruCache<String, int>(
         maxSize: 3,
         ttl: const Duration(milliseconds: 100),
-      );
-
-      cache.put('a', 1);
-      cache.put('b', 2);
+      )
+        ..put('a', 1)
+        ..put('b', 2);
 
       await Future<void>.delayed(const Duration(milliseconds: 150));
 

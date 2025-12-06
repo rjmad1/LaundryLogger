@@ -32,7 +32,9 @@ class LruCache<K, V> {
   /// Gets a value from cache if it exists and hasn't expired.
   V? get(K key) {
     final entry = _cache.remove(key);
-    if (entry == null) return null;
+    if (entry == null) {
+      return null;
+    }
 
     // Check if expired
     if (entry.isExpired) {

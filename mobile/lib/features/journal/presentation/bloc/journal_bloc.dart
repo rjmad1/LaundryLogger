@@ -338,7 +338,7 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
     } catch (e) {
       emit(state.copyWith(
         status: JournalStatus.failure,
-        error: 'Failed to revert: ${e}',
+        error: 'Failed to revert: $e',
       ),);
     }
   }

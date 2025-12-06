@@ -83,7 +83,7 @@ class SecurityService {
     await _secureStorage.delete(key: _pinHashKey);
     await _secureStorage.delete(key: _pinSaltKey);
     await _resetAttemptCounter();
-    await setBiometricEnabled(false);
+    await setBiometricEnabled(enabled: false);
   }
 
   /// Verifies a PIN attempt.
@@ -128,7 +128,9 @@ class SecurityService {
   /// Checks if the account is currently locked out.
   Future<bool> isLockedOut() async {
     final lockoutUntil = await _getLockoutUntil();
-    if (lockoutUntil == null) return false;
+    if (lockoutUntil == null) {
+      return false;
+    }
     return DateTime.now().isBefore(lockoutUntil);
   }
 
@@ -166,7 +168,7 @@ class SecurityService {
   }
 
   /// Enables or disables biometric authentication.
-  Future<void> setBiometricEnabled(bool enabled) async {
+  Future<void> setBiometricEnabled({required bool enabled}) async {
     await _databaseHelper.setSetting(
       _biometricEnabledKey,
       enabled.toString(),
@@ -247,7 +249,9 @@ backup files in a secure location.
 
   /// Constant-time comparison to prevent timing attacks.
   bool _constantTimeCompare(List<int> a, List<int> b) {
-    if (a.length != b.length) return false;
+    if (a.length != b.length) {
+      return false;
+    }
     var result = 0;
     for (var i = 0; i < a.length; i++) {
       result |= a[i] ^ b[i];
@@ -284,7 +288,9 @@ backup files in a secure location.
 
   Future<DateTime?> _getLockoutUntil() async {
     final value = await _secureStorage.read(key: _lockoutUntilKey);
-    if (value == null) return null;
+    if (value == null) {
+      return null;
+    }
     return DateTime.tryParse(value);
   }
 }

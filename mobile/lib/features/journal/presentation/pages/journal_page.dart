@@ -87,7 +87,7 @@ class _PendingTab extends StatelessWidget {
                 Icon(
                   Icons.check_circle_outline,
                   size: 64,
-                  color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
                 ),
                 const SizedBox(height: 16),
                 Text(
@@ -196,7 +196,7 @@ class _HistoryTab extends StatelessWidget {
                 Icon(
                   Icons.history,
                   size: 64,
-                  color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
                 ),
                 const SizedBox(height: 16),
                 Text(

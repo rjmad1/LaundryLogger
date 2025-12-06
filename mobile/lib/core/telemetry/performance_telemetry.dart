@@ -9,18 +9,15 @@ class PerformanceTelemetry {
   static final PerformanceTelemetry instance = PerformanceTelemetry._();
 
   /// Whether telemetry is enabled (opt-in).
-  bool _enabled = false;
-
-  /// Enable or disable telemetry.
-  void setEnabled(bool enabled) {
-    _enabled = enabled;
-  }
+  bool enabled = false;
 
   /// Records a journal render event with bucketed milliseconds.
   ///
   /// Buckets: <100ms, 100-200ms, 200-500ms, >500ms
   void recordJournalRender(int milliseconds) {
-    if (!_enabled) return;
+    if (!enabled) {
+      return;
+    }
 
     final bucket = _bucketRenderTime(milliseconds);
     _logEvent('perf_journal_render', {'bucket': bucket});
@@ -30,7 +27,9 @@ class PerformanceTelemetry {
   ///
   /// Buckets: <50ms, 50-100ms, 100-200ms, >200ms
   void recordDatabaseQuery(String queryType, int milliseconds) {
-    if (!_enabled) return;
+    if (!enabled) {
+      return;
+    }
 
     final bucket = _bucketQueryTime(milliseconds);
     _logEvent('perf_db_query', {
@@ -41,30 +40,50 @@ class PerformanceTelemetry {
 
   /// Records app startup time with bucketed milliseconds.
   void recordAppStartup(int milliseconds) {
-    if (!_enabled) return;
+    if (!enabled) {
+      return;
+    }
 
     final bucket = _bucketStartupTime(milliseconds);
     _logEvent('perf_app_startup', {'bucket': bucket});
   }
 
   String _bucketRenderTime(int ms) {
-    if (ms < 100) return '<100ms';
-    if (ms < 200) return '100-200ms';
-    if (ms < 500) return '200-500ms';
+    if (ms < 100) {
+      return '<100ms';
+    }
+    if (ms < 200) {
+      return '100-200ms';
+    }
+    if (ms < 500) {
+      return '200-500ms';
+    }
     return '>500ms';
   }
 
   String _bucketQueryTime(int ms) {
-    if (ms < 50) return '<50ms';
-    if (ms < 100) return '50-100ms';
-    if (ms < 200) return '100-200ms';
+    if (ms < 50) {
+      return '<50ms';
+    }
+    if (ms < 100) {
+      return '50-100ms';
+    }
+    if (ms < 200) {
+      return '100-200ms';
+    }
     return '>200ms';
   }
 
   String _bucketStartupTime(int ms) {
-    if (ms < 500) return '<500ms';
-    if (ms < 1000) return '500-1000ms';
-    if (ms < 2000) return '1-2s';
+    if (ms < 500) {
+      return '<500ms';
+    }
+    if (ms < 1000) {
+      return '500-1000ms';
+    }
+    if (ms < 2000) {
+      return '1-2s';
+    }
     return '>2s';
   }
 
@@ -80,7 +99,9 @@ class PerformanceTelemetry {
     String eventType,
     Future<T> Function() fn,
   ) async {
-    if (!_enabled) return fn();
+    if (!enabled) {
+      return fn();
+    }
 
     final stopwatch = Stopwatch()..start();
     try {

@@ -7,12 +7,17 @@ import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 /// DatabaseBootstrap ensures sqflite is configured for the current platform.
 /// Call `DatabaseBootstrap.init()` before any database operations.
 class DatabaseBootstrap {
+  // Private constructor to prevent instantiation
+  DatabaseBootstrap._();
+  
   static bool _initialized = false;
 
   /// Initialize platform-specific database factory for desktop platforms.
   /// Safe to call multiple times; initialization is idempotent.
   static Future<void> init() async {
-    if (_initialized) return;
+    if (_initialized) {
+      return;
+    }
 
     // Ensure Flutter bindings so platform channels and file IO are safe.
     WidgetsFlutterBinding.ensureInitialized();

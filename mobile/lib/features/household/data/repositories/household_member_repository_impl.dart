@@ -52,7 +52,9 @@ class HouseholdMemberRepositoryImpl implements HouseholdMemberRepository {
       whereArgs: [id],
     );
 
-    if (maps.isEmpty) return null;
+    if (maps.isEmpty) {
+      return null;
+    }
     return HouseholdMemberModel.fromMap(maps.first).toEntity();
   }
 
@@ -135,7 +137,9 @@ class HouseholdMemberRepositoryImpl implements HouseholdMemberRepository {
   Future<bool> deleteMemberPermanently(int id) async {
     // Only allow permanent deletion of archived members
     final member = await getMemberById(id);
-    if (member == null) return false;
+    if (member == null) {
+      return false;
+    }
 
     if (!member.isArchived) {
       throw StateError(

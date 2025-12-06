@@ -90,7 +90,9 @@ class TransactionRepositoryImpl implements TransactionRepository {
       whereArgs: [id],
     );
 
-    if (maps.isEmpty) return null;
+    if (maps.isEmpty) {
+      return null;
+    }
     return TransactionModel.fromMap(maps.first).toEntity();
   }
 

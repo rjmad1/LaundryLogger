@@ -354,7 +354,9 @@ class DatabaseHelper {
       where: 'key = ?',
       whereArgs: [key],
     );
-    if (results.isEmpty) return null;
+    if (results.isEmpty) {
+      return null;
+    }
     return results.first['value'] as String?;
   }
 

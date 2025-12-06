@@ -84,16 +84,15 @@ class BackupService {
   /// Creates a CSV export (unencrypted, for data portability).
   Future<File> createCsvExport() async {
     final data = await _databaseHelper.exportAllData();
-    final buffer = StringBuffer();
+    final buffer = StringBuffer()
+      ..writeln('# $_csvMagic')
+      ..writeln('# Schema Version: ${data['schema_version']}')
+      ..writeln('# Exported: ${data['exported_at']}')
+      ..writeln()
 
-    buffer.writeln('# $_csvMagic');
-    buffer.writeln('# Schema Version: ${data['schema_version']}');
-    buffer.writeln('# Exported: ${data['exported_at']}');
-    buffer.writeln();
-
-    // Items
-    buffer.writeln('# ITEMS');
-    buffer.writeln('id,name,default_rate,category,is_favorite,is_archived');
+      // Items
+      ..writeln('# ITEMS')
+      ..writeln('id,name,default_rate,category,is_favorite,is_archived');
     for (final item in (data['items'] as List<dynamic>? ?? [])) {
       final i = item as Map<String, dynamic>;
       buffer.writeln(
@@ -101,11 +100,11 @@ class BackupService {
         '${_escapeCsv(i['category'])},${i['is_favorite']},${i['is_archived']}',
       );
     }
-    buffer.writeln();
-
-    // Members
-    buffer.writeln('# MEMBERS');
-    buffer.writeln('id,name,color,is_active,is_archived');
+    buffer
+      ..writeln()
+      // Members
+      ..writeln('# MEMBERS')
+      ..writeln('id,name,color,is_active,is_archived');
     for (final member in (data['members'] as List<dynamic>? ?? [])) {
       final m = member as Map<String, dynamic>;
       buffer.writeln(
@@ -113,13 +112,14 @@ class BackupService {
         '${m['is_active']},${m['is_archived']}',
       );
     }
-    buffer.writeln();
+    buffer
+      ..writeln()
 
-    // Transactions
-    buffer.writeln('# TRANSACTIONS');
-    buffer.writeln(
-      'id,item_name,quantity,rate,price_at_time,status,member_name,sent_at,returned_at',
-    );
+      // Transactions
+      ..writeln('# TRANSACTIONS')
+      ..writeln(
+        'id,item_name,quantity,rate,price_at_time,status,member_name,sent_at,returned_at',
+      );
     for (final txn in (data['transactions'] as List<dynamic>? ?? [])) {
       final t = txn as Map<String, dynamic>;
       buffer.writeln(
@@ -270,6 +270,7 @@ class BackupService {
     final backups = <BackupFileInfo>[];
     for (final file in files) {
       try {
+        // ignore: avoid_slow_async_io
         final stat = await file.stat();
         backups.add(
           BackupFileInfo(
@@ -290,7 +291,9 @@ class BackupService {
 
   /// Deletes a backup file.
   Future<void> deleteBackup(File file) async {
-    if (await file.exists()) {
+    // ignore: avoid_slow_async_io
+    final exists = await file.exists();
+    if (exists) {
       await file.delete();
     }
   }
@@ -355,7 +358,9 @@ class BackupService {
 
     var valid = true;
     for (var i = 0; i < 16; i++) {
-      if (tag[i] != expectedTag[i]) valid = false;
+      if (tag[i] != expectedTag[i]) {
+        valid = false;
+      }
     }
     if (!valid) {
       throw const BackupException('Incorrect password or corrupted backup');
@@ -417,7 +422,9 @@ class BackupService {
   }
 
   String _escapeCsv(dynamic value) {
-    if (value == null) return '';
+    if (value == null) {
+      return '';
+    }
     final str = value.toString();
     if (str.contains(',') || str.contains('"') || str.contains('\n')) {
       return '"${str.replaceAll('"', '""')}"';
@@ -497,8 +504,12 @@ class BackupFileInfo {
   final DateTime createdAt;
 
   String get formattedSize {
-    if (size < 1024) return '$size B';
-    if (size < 1024 * 1024) return '${(size / 1024).toStringAsFixed(1)} KB';
+    if (size < 1024) {
+      return '$size B';
+    }
+    if (size < 1024 * 1024) {
+      return '${(size / 1024).toStringAsFixed(1)} KB';
+    }
     return '${(size / (1024 * 1024)).toStringAsFixed(1)} MB';
   }
 }

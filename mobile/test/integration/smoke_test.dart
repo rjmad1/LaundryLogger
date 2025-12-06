@@ -34,8 +34,7 @@ void main() {
         itemId: 1,
         itemName: 'Test Shirt',
         quantity: 2,
-        rate: 25.0,
-        status: TransactionStatus.sent,
+        rate: 25,
       );
 
       // Act: Create and fetch pending
@@ -55,8 +54,7 @@ void main() {
         itemId: 1,
         itemName: 'Test Pants',
         quantity: 1,
-        rate: 30.0,
-        status: TransactionStatus.sent,
+        rate: 30,
       );
 
       final created = await repository.createTransaction(transaction);
@@ -89,12 +87,13 @@ void main() {
       }
 
       stopwatch.stop();
-      print('Created 5k transactions in ${stopwatch.elapsedMilliseconds}ms');
+      // Created 5k transactions
 
       // Act: Query transactions
-      stopwatch
-        ..reset()
-        ..start();
+      // ignore: cascade_invocations
+      stopwatch.reset();
+      // ignore: cascade_invocations
+      stopwatch.start();
       
       final transactions = await repository.getTransactions(limit: 20);
       
@@ -104,8 +103,7 @@ void main() {
       // Assert: First page should load fast
       expect(transactions.length, 20);
       expect(queryTime, lessThan(100), reason: 'Initial query should be <100ms');
-      
-      print('Queried first 20 of 5k transactions in ${queryTime}ms');
+      // Queried first 20 of 5k transactions
     });
   });
 }

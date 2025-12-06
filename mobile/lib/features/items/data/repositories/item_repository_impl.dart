@@ -52,7 +52,9 @@ class ItemRepositoryImpl implements ItemRepository {
       whereArgs: [id],
     );
 
-    if (maps.isEmpty) return null;
+    if (maps.isEmpty) {
+      return null;
+    }
     return LaundryItemModel.fromMap(maps.first).toEntity();
   }
 
@@ -160,7 +162,9 @@ class ItemRepositoryImpl implements ItemRepository {
   Future<bool> deleteItemPermanently(int id) async {
     // Only allow permanent deletion of archived items
     final item = await getItemById(id);
-    if (item == null) return false;
+    if (item == null) {
+      return false;
+    }
 
     if (!item.isArchived) {
       throw StateError(

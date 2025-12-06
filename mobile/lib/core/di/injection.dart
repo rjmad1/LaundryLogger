@@ -19,33 +19,34 @@ final getIt = GetIt.instance;
 /// Configure all dependencies.
 Future<void> configureDependencies() async {
   // Database
-  getIt.registerLazySingleton<DatabaseHelper>(() => DatabaseHelper.instance);
+  getIt
+    ..registerLazySingleton<DatabaseHelper>(() => DatabaseHelper.instance)
 
-  // Core Services
-  getIt.registerLazySingleton<SecurityService>(SecurityService.new);
-  getIt.registerLazySingleton<BackupService>(
-    () => BackupService(databaseHelper: getIt()),
-  );
+    // Core Services
+    ..registerLazySingleton<SecurityService>(SecurityService.new)
+    ..registerLazySingleton<BackupService>(
+      () => BackupService(databaseHelper: getIt()),
+    )
 
-  // Repositories
-  getIt.registerLazySingleton<ItemRepository>(
-    () => ItemRepositoryImpl(databaseHelper: getIt()),
-  );
-  getIt.registerLazySingleton<TransactionRepository>(
-    () => TransactionRepositoryImpl(databaseHelper: getIt()),
-  );
-  getIt.registerLazySingleton<HouseholdMemberRepository>(
-    () => HouseholdMemberRepositoryImpl(databaseHelper: getIt()),
-  );
+    // Repositories
+    ..registerLazySingleton<ItemRepository>(
+      () => ItemRepositoryImpl(databaseHelper: getIt()),
+    )
+    ..registerLazySingleton<TransactionRepository>(
+      () => TransactionRepositoryImpl(databaseHelper: getIt()),
+    )
+    ..registerLazySingleton<HouseholdMemberRepository>(
+      () => HouseholdMemberRepositoryImpl(databaseHelper: getIt()),
+    )
 
-  // BLoCs
-  getIt.registerFactory<ItemBloc>(
-    () => ItemBloc(itemRepository: getIt()),
-  );
-  getIt.registerFactory<JournalBloc>(
-    () => JournalBloc(transactionRepository: getIt()),
-  );
-  getIt.registerFactory<HouseholdBloc>(
-    () => HouseholdBloc(memberRepository: getIt()),
-  );
+    // BLoCs
+    ..registerFactory<ItemBloc>(
+      () => ItemBloc(itemRepository: getIt()),
+    )
+    ..registerFactory<JournalBloc>(
+      () => JournalBloc(transactionRepository: getIt()),
+    )
+    ..registerFactory<HouseholdBloc>(
+      () => HouseholdBloc(memberRepository: getIt()),
+    );
 }
