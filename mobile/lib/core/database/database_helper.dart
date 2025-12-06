@@ -17,7 +17,7 @@ class DatabaseHelper {
   static const String _databaseName = 'laundry_logger.db';
 
   /// Current database version.
-  static const int _databaseVersion = 2;
+  static const int _databaseVersion = 3;
 
   /// Schema version for backup compatibility.
   static const int schemaVersion = 2;
@@ -170,6 +170,10 @@ class DatabaseHelper {
     if (oldVersion < 2) {
       await _migrateV1ToV2(db);
     }
+    // Migration from v2 to v3
+    if (oldVersion < 3) {
+      await _migrateV2ToV3(db);
+    }
   }
 
   /// Migration from schema v1 to v2.
@@ -216,6 +220,33 @@ class DatabaseHelper {
     await db.execute(
       'CREATE INDEX IF NOT EXISTS idx_items_category ON $tableItems (category)',
     );
+  }
+
+  /// Migration from schema v2 to v3.
+  /// Adds service tracking columns to transactions.
+  Future<void> _migrateV2ToV3(Database db) async {
+    // Add services column (JSON array of service names)
+    await db.execute(
+      'ALTER TABLE $tableTransactions ADD COLUMN services TEXT NOT NULL DEFAULT \'[]\'',
+    );
+
+    // Add service_charges column (JSON object mapping service to charge)
+    await db.execute(
+      'ALTER TABLE $tableTransactions ADD COLUMN service_charges TEXT NOT NULL DEFAULT \'{}\'',
+    );
+
+    // Insert default service charge settings
+    final now = DateTime.now().toIso8601String();
+    await db.insert(tableSettings, {
+      'key': 'iron_charge',
+      'value': '10.0',
+      'updated_at': now,
+    });
+    await db.insert(tableSettings, {
+      'key': 'press_charge',
+      'value': '5.0',
+      'updated_at': now,
+    });
   }
 
   /// Inserts default laundry items.

@@ -30,6 +30,8 @@ class LaundryTransaction extends Equatable {
     this.sentAt,
     this.returnedAt,
     this.createdAt,
+    this.services = const [],
+    this.serviceCharges = const {},
   });
 
   /// Unique identifier for the transaction.
@@ -68,8 +70,22 @@ class LaundryTransaction extends Equatable {
   /// When the transaction was created.
   final DateTime? createdAt;
 
-  /// Calculates the total cost for this transaction.
-  double get totalCost => quantity * rate;
+  /// Services applied to this transaction (e.g., ['iron', 'press']).
+  final List<String> services;
+
+  /// Service charges as a map of service name to amount.
+  final Map<String, double> serviceCharges;
+
+  /// Calculates the base cost for this transaction (quantity * rate).
+  double get baseCost => quantity * rate;
+
+  /// Calculates the total service charges.
+  double get totalServiceCharges {
+    return serviceCharges.values.fold(0.0, (sum, charge) => sum + charge);
+  }
+
+  /// Calculates the total cost including services.
+  double get totalCost => baseCost + totalServiceCharges;
 
   /// Creates a copy of this transaction with the given fields replaced.
   LaundryTransaction copyWith({
@@ -85,6 +101,8 @@ class LaundryTransaction extends Equatable {
     DateTime? sentAt,
     DateTime? returnedAt,
     DateTime? createdAt,
+    List<String>? services,
+    Map<String, double>? serviceCharges,
   }) {
     return LaundryTransaction(
       id: id ?? this.id,
@@ -99,6 +117,8 @@ class LaundryTransaction extends Equatable {
       sentAt: sentAt ?? this.sentAt,
       returnedAt: returnedAt ?? this.returnedAt,
       createdAt: createdAt ?? this.createdAt,
+      services: services ?? this.services,
+      serviceCharges: serviceCharges ?? this.serviceCharges,
     );
   }
 
@@ -116,5 +136,7 @@ class LaundryTransaction extends Equatable {
         sentAt,
         returnedAt,
         createdAt,
+        services,
+        serviceCharges,
       ];
 }

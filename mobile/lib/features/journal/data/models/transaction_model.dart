@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import '../../domain/entities/transaction.dart';
 
 /// Data model for LaundryTransaction with JSON/Map serialization.
@@ -12,6 +14,8 @@ class TransactionModel extends LaundryTransaction {
     super.sentAt,
     super.returnedAt,
     super.createdAt,
+    super.services = const [],
+    super.serviceCharges = const {},
   });
 
   /// Creates a TransactionModel from a Map (database row).
@@ -35,6 +39,8 @@ class TransactionModel extends LaundryTransaction {
       createdAt: map['created_at'] != null
           ? DateTime.parse(map['created_at'] as String)
           : null,
+      services: _parseServices(map['services'] as String?),
+      serviceCharges: _parseServiceCharges(map['service_charges'] as String?),
     );
   }
 
@@ -53,6 +59,8 @@ class TransactionModel extends LaundryTransaction {
       sentAt: transaction.sentAt,
       returnedAt: transaction.returnedAt,
       createdAt: transaction.createdAt,
+      services: transaction.services,
+      serviceCharges: transaction.serviceCharges,
     );
   }
 
@@ -86,6 +94,49 @@ class TransactionModel extends LaundryTransaction {
     }
   }
 
+  /// Parses services from JSON string.
+  static List<String> _parseServices(String? servicesJson) {
+    if (servicesJson == null || servicesJson.isEmpty || servicesJson == '[]') {
+      return [];
+    }
+    try {
+      final decoded = jsonDecode(servicesJson);
+      if (decoded is List) {
+        return decoded.map((e) => e.toString()).toList();
+      }
+      return [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  /// Parses service charges from JSON string.
+  static Map<String, double> _parseServiceCharges(String? chargesJson) {
+    if (chargesJson == null || chargesJson.isEmpty || chargesJson == '{}') {
+      return {};
+    }
+    try {
+      final decoded = jsonDecode(chargesJson);
+      if (decoded is Map) {
+        return decoded.map((key, value) =>
+            MapEntry(key.toString(), (value as num).toDouble()));
+      }
+      return {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  /// Converts services list to JSON string.
+  static String _servicesToString(List<String> services) {
+    return jsonEncode(services);
+  }
+
+  /// Converts service charges map to JSON string.
+  static String _serviceChargesToString(Map<String, double> charges) {
+    return jsonEncode(charges);
+  }
+
   /// Converts this model to a Map for database storage.
   Map<String, dynamic> toMap() {
     return {
@@ -102,6 +153,8 @@ class TransactionModel extends LaundryTransaction {
       'sent_at': sentAt?.toIso8601String(),
       'returned_at': returnedAt?.toIso8601String(),
       'created_at': (createdAt ?? DateTime.now()).toIso8601String(),
+      'services': _servicesToString(services),
+      'service_charges': _serviceChargesToString(serviceCharges),
     };
   }
 
@@ -121,6 +174,8 @@ class TransactionModel extends LaundryTransaction {
       'sent_at': (sentAt ?? now).toIso8601String(),
       'returned_at': returnedAt?.toIso8601String(),
       'created_at': now.toIso8601String(),
+      'services': _servicesToString(services),
+      'service_charges': _serviceChargesToString(serviceCharges),
     };
   }
 
@@ -137,6 +192,8 @@ class TransactionModel extends LaundryTransaction {
       'notes': notes,
       'sent_at': sentAt?.toIso8601String(),
       'returned_at': returnedAt?.toIso8601String(),
+      'services': _servicesToString(services),
+      'service_charges': _serviceChargesToString(serviceCharges),
     };
   }
 
@@ -155,6 +212,8 @@ class TransactionModel extends LaundryTransaction {
       sentAt: sentAt,
       returnedAt: returnedAt,
       createdAt: createdAt,
+      services: services,
+      serviceCharges: serviceCharges,
     );
   }
 }
