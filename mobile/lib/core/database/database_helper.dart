@@ -84,7 +84,7 @@ class DatabaseHelper {
       )
     ''');
 
-    // Create transactions table with price_at_time and status constraint
+    // Create transactions table with price_at_time, services, and status constraint
     await db.execute('''
       CREATE TABLE $tableTransactions (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -100,6 +100,8 @@ class DatabaseHelper {
         sent_at TEXT,
         returned_at TEXT,
         created_at TEXT NOT NULL,
+        services TEXT NOT NULL DEFAULT '[]',
+        service_charges TEXT NOT NULL DEFAULT '{}',
         FOREIGN KEY (item_id) REFERENCES $tableItems (id) ON DELETE RESTRICT,
         FOREIGN KEY (member_id) REFERENCES $tableMembers (id) ON DELETE SET NULL
       )
@@ -125,6 +127,19 @@ class DatabaseHelper {
         updated_at TEXT NOT NULL
       )
     ''');
+
+    // Insert default service charge settings
+    final now = DateTime.now().toIso8601String();
+    await db.insert(tableSettings, {
+      'key': 'iron_charge',
+      'value': '10.0',
+      'updated_at': now,
+    });
+    await db.insert(tableSettings, {
+      'key': 'press_charge',
+      'value': '5.0',
+      'updated_at': now,
+    });
   }
 
   /// Creates indexes for query performance.
