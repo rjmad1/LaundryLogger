@@ -114,3 +114,9 @@ coverage/
 
 # Backup files
 *.bak
+
+# Temporary projects
+temp_project/
+
+# Analysis output
+**/analyze_output.txt
